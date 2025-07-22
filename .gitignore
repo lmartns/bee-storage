@@ -1,0 +1,27 @@
+# .gitignore
+
+# Dependências
+node_modules
+
+# Arquivos de Build
+.next/
+dist/
+build/
+
+# Cache do Turborepo
+.turbo
+
+# Arquivos de Log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Variáveis de Ambiente
+.env
+.env.local
+.env.*.local
+
+# Sistema Operacional
+.DS_Store
+Thumbs.db
