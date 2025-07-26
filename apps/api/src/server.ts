@@ -1,12 +1,16 @@
-import express from 'express';
+import { app } from "./app";
+import { AppDataSource } from "./infra/database/data-source";
 
-const app = express();
 const port = process.env.PORT || 3333;
 
-app.get('/', (req, res) => {
-  res.json({ message: 'BeeStorage API is alive! 🐝' });
-});
+AppDataSource.initialize()
+  .then(() => {
+    console.log("Data source has been initialized");
 
-app.listen(port, () => {
-  console.log('server up on', port)
-});
+    app.listen(port, () => {
+      console.log(`API server listening on http://localhost:${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Error during data source initialization", err);
+  });
