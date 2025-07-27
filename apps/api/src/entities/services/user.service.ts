@@ -1,4 +1,7 @@
+import * as bcrypt from "bcryptjs";
 import { IUserRepository } from "../../ports/user.repository.port";
+import { User } from "../models/user.models";
+import { CreateUserDTO } from "../../infrastructure/http/dtos/createUser.dto";
 import { DeleteUserDTO } from "../../infrastructure/http/dtos/deleteUser";
 import {
   GetAllUsersDto,
@@ -21,6 +24,27 @@ export class UserService {
 
     const user = userSchema.parse(data);
     return user;
+  }
+
+  async register(data: CreateUserDTO): Promise<Omit<User, "password">> {
+    const existingUser = await this.userRepository.findByEmail(data.email);
+
+    if (existingUser) {
+      throw new Error("Email already in use.");
+    }
+
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+
+    const user = new User();
+    user.name = data.name;
+    user.email = data.email;
+    user.password = hashedPassword;
+    user.status = data.status;
+
+    const savedUser = await this.userRepository.save(user);
+
+    const { password, ...userWithoutPassword } = savedUser;
+    return userWithoutPassword;
   }
 
   async delete(id: DeleteUserDTO): Promise<void> {

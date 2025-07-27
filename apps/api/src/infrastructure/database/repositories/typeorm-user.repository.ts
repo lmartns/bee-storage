@@ -1,8 +1,7 @@
 import { Repository } from "typeorm";
 import { IUserRepository } from "../../../ports/user.repository.port";
-import { User } from "../../../domain/models/user.models";
+import { User } from "../../../domain/entities/user.entity";
 import { AppDataSource } from "../data-source";
-import { UserStatus } from "../../../types/enums/userStatus.enum";
 import { DeleteUserDTO } from "../../http/dtos/deleteUser";
 import {
   GetAllUsersDto,
