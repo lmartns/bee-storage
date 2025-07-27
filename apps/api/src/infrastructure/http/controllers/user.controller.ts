@@ -1,29 +1,39 @@
-import { UserService } from "../../../domain/services/user.service";
 import { Request, Response } from "express";
-import { createUserSchema } from "../dtos/createUser.dto";
-import { findByIdSchema } from "../dtos/findByIdUser.dto";
+import { CreateUserService } from "../../../domain/use-cases/user/create-user/create-user.service";
+import { FindUserService } from "../../../domain/use-cases/user/find-user/find-user.service";
+import { ListUsersService } from "../../../domain/use-cases/user/list-users/list-users.service";
+import { DeleteUserService } from "../../../domain/use-cases/user/delete-user/delete-user.service";
+import { toSafeUser } from "../../../helpers/safe-user";
+import { createDtoSchema } from "../dtos/user/create.dto";
+import { idParamDtoSchema } from "../dtos/user/id-param.dto";
+
 
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private readonly createUser: CreateUserService,
+    private readonly findUser: FindUserService,
+    private readonly listUsers: ListUsersService,
+    private readonly deleteUser: DeleteUserService
+  ) {}
 
-  async getALl(req: Request, res: Response): Promise<Response> {
-    const users = await this.userService.getAll();
-    return res.status(200).json(users);
+  async listAll(req: Request, res: Response): Promise<Response> {
+    const users = await this.listUsers.execute();
+    return res.status(200).json(users.map(toSafeUser));
   }
 
-  async getById(req: Request, res: Response): Promise<Response> {
-    const id = findByIdSchema.parse(req.params);
-    const user = await this.userService.getById(id);
+  async findById(req: Request, res: Response): Promise<Response> {
+    const id = idParamDtoSchema.parse(req.params);
+    const user = await this.findUser.execute(id);
     return res.status(200).json(user);
   }
 
   async create(req: Request, res: Response): Promise<Response> {
     try {
-      const data = createUserSchema.parse(req.body);
+      const data = createDtoSchema.parse(req.body);
 
-      const user = await this.userService.register(data);
+      const user = await this.createUser.execute(data);
 
-      return res.status(201).json(user);
+      return res.status(201).json(toSafeUser(user));
     } catch (error: any) {
       return res.status(400).json({ message: error.message });
     }
@@ -31,6 +41,8 @@ export class UserController {
 
   async delete(req: Request, res: Response): Promise<Response> {
     try {
+      const id = idParamDtoSchema.parse(req.params);
+      await this.deleteUser.execute(id);
       return res.status(200).send();
     } catch (error: any) {
       return res.status(400).json({ message: error });
