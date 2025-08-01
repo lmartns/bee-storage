@@ -26,7 +26,11 @@ export class TypeORMUserRepository implements IUserRepository {
     return this.ormRepository.save(user);
   }
 
+  async update(user: User): Promise<User> {
+      return this.ormRepository.save(user)
+  }
+
   async delete(id: string): Promise<void> {
-    this.ormRepository.delete(id);
+    await this.ormRepository.delete(id);
   }
 }
