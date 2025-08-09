@@ -1,15 +1,15 @@
-import swaggerAutogen from 'swagger-autogen';
+import swaggerAutogen from "swagger-autogen";
 
-const outputFile = './swagger-output.json';
-const endpointsFiles = ['./src/infrastructure/http/routes/user.routes.ts'];
+const outputFile = "./swagger-output.json";
+const endpointsFiles = ["./src/infrastructure/http/routes/user.routes.ts"];
 
 const doc = {
   info: {
-    title: 'API',
-    description: 'Documentation'
+    title: "API",
+    description: "Documentation",
   },
-  host: 'localhost:3000',
-  schemes: ['http']
+  host: "localhost:3333",
+  schemes: ["http"],
 };
 
-swaggerAutogen({ openapi: '3.0.0' })(outputFile, endpointsFiles, doc);
+swaggerAutogen({ openapi: "3.0.0" })(outputFile, endpointsFiles, doc);
