@@ -8,6 +8,10 @@ import { createDtoSchema } from "../dtos/user/create.dto";
 import { idParamDtoSchema } from "../dtos/user/id-param.dto";
 import { UpdateUserService } from "../../../domain/use-cases/user/update-user/update-user.service";
 import { UpdateDtoSchema } from "../dtos/user/update-dto";
+import { zodPrettyError } from "../../../helpers/zod-prettify";
+import { LoginUserService } from "../../../domain/use-cases/user/login-user/login-user.service";
+import { LoginDtoSchema } from "../dtos/user/login.dto";
+import { ZodError } from "zod";
 
 export class UserController {
   constructor(
@@ -15,7 +19,8 @@ export class UserController {
     private readonly findUser: FindUserService,
     private readonly listUsers: ListUsersService,
     private readonly updateUser: UpdateUserService,
-    private readonly deleteUser: DeleteUserService
+    private readonly deleteUser: DeleteUserService,
+    private readonly loginUser: LoginUserService,
   ) {}
 
   async listAll(req: Request, res: Response): Promise<Response> {
@@ -37,22 +42,37 @@ export class UserController {
 
       return res.status(201).json(toSafeUser(user));
     } catch (error: any) {
-      return res.status(400).json({ message: error.message });
+      return res.status(400).json({ message: zodPrettyError(error) });
     }
   }
 
- async update(req: Request, res: Response): Promise<Response> {
-  try {
-    const id = idParamDtoSchema.parse(req.params).id;
-    const data = UpdateDtoSchema.parse(req.body);
+  async login(req: Request, res: Response): Promise<Response> {
+    try {
+      const data = LoginDtoSchema.parse(req.body);
 
-    const user = await this.updateUser.execute({ id, ...data });
+      await this.loginUser.execute(data);
 
-    return res.status(200).json(toSafeUser(user));
-  } catch (error: any) {
-    return res.status(400).json({ message: error.message });
+      return res.status(200).json("Sucess");
+    } catch (error: any) {
+      if (error instanceof ZodError) {
+        return res.status(400).json(zodPrettyError(error));
+      }
+      throw error;
+    }
   }
-}
+
+  async update(req: Request, res: Response): Promise<Response> {
+    try {
+      const id = idParamDtoSchema.parse(req.params).id;
+      const data = UpdateDtoSchema.parse(req.body);
+
+      const user = await this.updateUser.execute({ id, ...data });
+
+      return res.status(200).json(toSafeUser(user));
+    } catch (error: any) {
+      return res.status(400).json({ message: zodPrettyError(error) });
+    }
+  }
 
   async delete(req: Request, res: Response): Promise<Response> {
     try {

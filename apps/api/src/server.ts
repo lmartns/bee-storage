@@ -1,13 +1,19 @@
 import { app } from "./app";
 import { AppDataSource } from "./infrastructure/database/data-source";
-import swaggerUi from "swagger-ui-express";
 import bodyParser from "body-parser";
 import swaggerFile from "../swagger-output.json";
+import "dotenv/config";
+import { apiReference } from "@scalar/express-api-reference";
 
 const port = process.env.PORT || 3333;
 
 app.use(bodyParser.json());
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
+app.use(
+  "/reference",
+  apiReference({
+    content: swaggerFile,
+  }),
+);
 
 AppDataSource.initialize()
   .then(() => {

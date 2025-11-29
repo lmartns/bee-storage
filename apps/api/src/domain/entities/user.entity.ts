@@ -1,4 +1,9 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { UserStatus } from "../../types/enums/userStatus.enum";
 
 @Entity("users")
@@ -25,9 +30,9 @@ export class User {
   createdAt!: Date;
 
   @Column({
-    type: 'enum',
+    type: "enum",
     enum: UserStatus,
-    default: UserStatus.ACTIVE
+    default: UserStatus.ACTIVE,
   })
   status!: UserStatus;
 }

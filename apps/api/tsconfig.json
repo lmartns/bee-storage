@@ -1,15 +1,19 @@
+// apps/api/tsconfig.json - Final
 {
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es2022",
-    "module": "commonjs",
+    "target": "es2022", // Atualizado para modernidade
+    "module": "NodeNext", // Suporte a ESM (Módulo do Node.js nativo)
+    "moduleResolution": "NodeNext", // Suporte a ESM
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true, // Adicionado para melhor compatibilidade com imports
+    "isolatedModules": true
   }
 }
